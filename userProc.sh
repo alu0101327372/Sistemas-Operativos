@@ -7,6 +7,8 @@
 # Estilos
 TEXT_BOLD=$(tput bold)
 TEXT_GREEN=$(tput setaf 2)
+TEXT_YELLOW=$(tput setaf 3)
+TEXT_RED=$(tput setaf 9)
 TEXT_RESET=$(tput sgr0)
 
 # Constantes
@@ -92,7 +94,7 @@ usage() {
 
 # Funcion para salir en caso de error.
 error_exit() {
-	echo "$1" 1>&2
+	echo $TEXT_RED"$1"$TEXT_RESET 1>&2
 	exit 1
 }
 
@@ -147,7 +149,7 @@ while [ "$1" != "" ]; do
           elif [ "$1" = "-c" ]; then
             op_c=1
           elif [ "$1" = "-usr" ]; then
-            error_exit "-u and -usr are incompatible options"
+            op_usr=1
           fi
           break
         else
@@ -185,12 +187,8 @@ done
 printf "\e[1;34m%s %s %s %s %s %s\n\e[0m" USER UID GID TP OPID LP >> ${OUTFILE}
 
 # Si se utiliza la opcion -usr los usuarios que utilizamos son los del who
-if [ "$op_usr" = 1 ]; then
-  if [ "$op_u" = 1 ]; then
-    error_exit "-u and -usr are incompatible options"
-  else
-    users=$(who | cut -d " " -f 1 | sort | uniq)
-  fi
+if [[ "$op_usr" = 1 ]] && [[ "$op_u" != 1 ]]; then
+  users=$(who | cut -d " " -f 1 | sort | uniq)
   # Itera sobre los usarios del who que cumplen la condicion de tiempo y guarda el resultado en un archivo temporal
   for user in $users; do
     for i in $(userProc $user); do
@@ -201,7 +199,7 @@ if [ "$op_usr" = 1 ]; then
       fi
     done
   done
-elif [ "$op_u" = 1 ]; then
+elif [ "$op_u" = 1 ] && [[ "$op_usr" != 1 ]]; then
 # Itera sobre los usarios de la opcion -u que cumplen la condicion de tiempo y guarda el resultado en un archivo temporal
   for (( i=1; i<=number_of_users; i++ )); do
     tmp_user=$(echo $users | cut -d " " -f $i)
@@ -210,6 +208,24 @@ elif [ "$op_u" = 1 ]; then
         printf "%s %d %d %d %d %d\n" $j $(uid $j) $(gid $j) $(userProcCount $j) $(user_oldest_process_pid $j) $(user_lastest_process $j) >> ${TEMPFILE}
       else
         printf "%s %d %d %d %d %d\n" $j $(uid $j) $(gid $j) $(user_total_process $j) $(user_oldest_process_pid $j) $(user_lastest_process $j) >> ${TEMPFILE}
+      fi
+    done
+  done
+elif [ "$op_u" = 1 ] && [[ "$op_usr" = 1 ]]; then
+  users_who=$(who | cut -d " " -f 1 | sort | uniq)
+  for user in $users_who; do 
+    for (( i=1; i<=number_of_users; i++ )); do 
+      tmp_user=$(echo $users | cut -d " " -f $i)
+      if [ "$user" = "$tmp_user" ]; then
+        for j in $(userProc $tmp_user); do
+          if [ "$op_count" = 1 ]; then
+            printf "%s %d %d %d %d %d\n" $j $(uid $j) $(gid $j) $(userProcCount $j) $(user_oldest_process_pid $j) $(user_lastest_process $j) >> ${TEMPFILE}
+          else
+            printf "%s %d %d %d %d %d\n" $j $(uid $j) $(gid $j) $(user_total_process $j) $(user_oldest_process_pid $j) $(user_lastest_process $j) >> ${TEMPFILE}
+          fi
+        done
+      else
+        echo $TEXT_RED"User $TEXT_BOLD$tmp_user$TEXT_RESET$TEXT_RED is not connected to the system"$TEXT_RESET
       fi
     done
   done
