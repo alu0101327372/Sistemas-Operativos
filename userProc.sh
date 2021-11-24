@@ -23,6 +23,7 @@ tmp_user=
 args=
 filter=
 number_of_users=0
+op_t=0
 op_u=0
 op_usr=0
 op_inv=0
@@ -100,7 +101,7 @@ error_exit() {
 
 
 
-# Comprobamos el comando que precede al -inv
+# Comprobamos el comando que precede al -inv
 args=($@)
 length="${#args[@]}"
 for (( i=0; i<length; i++ )); do
@@ -124,8 +125,13 @@ while [ "$1" != "" ]; do
     -t )
       shift
       # El argumento -t n, si n no es numero muestra error
-      if [[ ! -n ${1//[0-9]/} ]]; then
-        time_cpu=$1
+      if [ "$1" != "" ]; then
+        if [[ ! -n ${1//[0-9]/} ]]; then
+          op_t=1
+          time_cpu=$1
+        else
+          error_exit "Input is not a number"
+        fi
       else
         error_exit "Input is not a number"
       fi
@@ -145,17 +151,28 @@ while [ "$1" != "" ]; do
             op_count=1
           elif [ "$1" = "-inv" ]; then
             op_inv=1
-
           elif [ "$1" = "-c" ]; then
             op_c=1
           elif [ "$1" = "-usr" ]; then
             op_usr=1
+          elif [ "$1" = "-pid" ]; then
+            op_pid=1
+          elif [ "$1" = "-t" ]; then
+            shift
+            time_cpu=$1
+          else
+            error_exit "Option not supported"
           fi
           break
         else
-          # Añadimos a $1 los usuarios que siguen despues de -u ...
-          users="$users $1"
-          number_of_users=$(( $number_of_users + 1 ))
+          # Comprobamos si el usuario existe
+          if id "$1" &>/dev/null; then
+            # Añadimos a $1 los usuarios que siguen despues de -u ...
+            users="$users $1"
+            number_of_users=$(( $number_of_users + 1 ))
+          else
+            echo $TEXT_RED"The user $1 does not exist"$TEXT_RESET 1>&2
+          fi
           shift
         fi
       done
@@ -186,6 +203,9 @@ done
 # Imprime el cabecero de la salida por pantalla
 printf "\e[1;34m%s %s %s %s %s %s\n\e[0m" USER UID GID TP OPID LP >> ${OUTFILE}
 
+if [ "$users" = "" ]; then 
+  error_exit "There are no users in the list"
+fi
 # Si se utiliza la opcion -usr los usuarios que utilizamos son los del who
 if [[ "$op_usr" = 1 ]] && [[ "$op_u" != 1 ]]; then
   users=$(who | cut -d " " -f 1 | sort | uniq)
