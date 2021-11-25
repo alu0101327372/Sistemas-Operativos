@@ -206,6 +206,9 @@ printf "\e[1;34m%s %s %s %s %s %s\n\e[0m" USER UID GID TP OPID LP >> ${OUTFILE}
 # Si se utiliza la opcion -usr los usuarios que utilizamos son los del who
 if [[ "$op_usr" = 1 ]] && [[ "$op_u" != 1 ]]; then
   users=$(who | cut -d " " -f 1 | sort | uniq)
+  if [ "$users" = "" ]; then
+    error_exit "There are no users"
+  fi
   # Itera sobre los usarios del who que cumplen la condicion de tiempo y guarda el resultado en un archivo temporal
   for user in $users; do
     for i in $(userProc $user); do
@@ -217,6 +220,9 @@ if [[ "$op_usr" = 1 ]] && [[ "$op_u" != 1 ]]; then
     done
   done
 elif [ "$op_u" = 1 ] && [[ "$op_usr" != 1 ]]; then
+  if [ "$users" = "" ]; then
+    error_exit "There are no users"
+  fi
 # Itera sobre los usarios de la opcion -u que cumplen la condicion de tiempo y guarda el resultado en un archivo temporal
   for (( i=1; i<=number_of_users; i++ )); do
     tmp_user=$(echo $users | cut -d " " -f $i)
@@ -230,6 +236,9 @@ elif [ "$op_u" = 1 ] && [[ "$op_usr" != 1 ]]; then
   done
 elif [ "$op_u" = 1 ] && [[ "$op_usr" = 1 ]]; then
   users_who=$(who | cut -d " " -f 1 | sort | uniq)
+  if [ "$users" = "" ]; then
+    error_exit "There are no users"
+  fi
   for user in $users_who; do 
     for (( i=1; i<=number_of_users; i++ )); do 
       tmp_user=$(echo $users | cut -d " " -f $i)
@@ -248,6 +257,9 @@ elif [ "$op_u" = 1 ] && [[ "$op_usr" = 1 ]]; then
   done
 else 
   users=$(ps ax --no-headers -ouser | sort | uniq)
+  if [ "$users" = "" ]; then
+    error_exit "There are no users"
+  fi  
   # Itera sobre los usarios del sistema que cumplen la condicion de tiempo y guarda el resultado en un archivo temporal
   for user in $users; do
     for i in $(userProc $user); do
