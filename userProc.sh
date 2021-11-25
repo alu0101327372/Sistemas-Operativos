@@ -203,9 +203,6 @@ done
 # Imprime el cabecero de la salida por pantalla
 printf "\e[1;34m%s %s %s %s %s %s\n\e[0m" USER UID GID TP OPID LP >> ${OUTFILE}
 
-if [ "$users" = "" ]; then 
-  error_exit "There are no users in the list"
-fi
 # Si se utiliza la opcion -usr los usuarios que utilizamos son los del who
 if [[ "$op_usr" = 1 ]] && [[ "$op_u" != 1 ]]; then
   users=$(who | cut -d " " -f 1 | sort | uniq)
