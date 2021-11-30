@@ -13,7 +13,7 @@
 #include "Socket.h"
 
 int protected_main() {
-  Socket socket_send("192.168.1.35", 1024);
+  Socket socket_send("127.0.0.1", 3000);
   char* filename = "prueba.txt";
   File file_send(filename, O_RDONLY);
 

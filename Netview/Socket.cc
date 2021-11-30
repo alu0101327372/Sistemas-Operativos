@@ -69,7 +69,6 @@ void Socket::receive_from(Message& message, sockaddr_in& address) {
   int remote_port = ntohs(address.sin_port);
   message.text[1023] = '\0';
   std::cout << "El sistema " << remote_ip << ":" << remote_port << " envió el mensaje '" << message.text.data() << "'\n";
-
 }
 
 

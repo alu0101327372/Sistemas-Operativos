@@ -15,7 +15,7 @@
 int protected_main() {
   Socket socket_receive("127.0.0.1", 1024);
   Message message;
-  sockaddr_in address{make_ip_address(1024, "192.168.1.35")};
+  sockaddr_in address{make_ip_address(3000, "127.0.0.1")};
   while (1 == 1) {
     socket_receive.receive_from(message, address);
   }
