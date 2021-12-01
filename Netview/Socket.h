@@ -12,16 +12,15 @@
 //      29/11/2021 - Creación (primera versión) del código
 #include "File.h"
 
-#include <iostream>
-#include <array>
-#include <string>
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include <iostream>
+#include <array>
+#include <string>
 #include <cerrno>
 #include <cstring>
 #include <stdexcept>

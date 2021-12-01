@@ -65,22 +65,25 @@ void Socket::receive_from(Message& message, sockaddr_in& address) {
   if (result < 0) {
     throw std::system_error(errno, std::system_category(), "Falló la recepción: ");
   }
+  // Convertimos la dirección IP como entero de 32 bits en una cadena de texto.
   char* remote_ip = inet_ntoa(address.sin_addr);
+  // Recuperamos el puerto del remitente en el orden adecuado para nuestra CPU
   int remote_port = ntohs(address.sin_port);
   message.text[1023] = '\0';
+  // Imprimimos el mensaje y la dirección del remitente
   std::cout << "El sistema " << remote_ip << ":" << remote_port << " envió el mensaje '" << message.text.data() << "'\n";
 }
 
 
 
 sockaddr_in make_ip_address(int port, const std::string& ip_address_input) {
-  if ((port < 0) || (65525  < port)) {
+  if ((port < 1) || (65535  < port)) {
     throw std::system_error(errno, std::system_category(), "Puerto no válido");
   }
   sockaddr_in result_address{};
   result_address.sin_family = AF_INET;
 
-  if (ip_address_input == "kk") {
+  if (ip_address_input == "") {
     result_address.sin_addr.s_addr = htonl(INADDR_ANY);
   } else {
     int ip_string_length = ip_address_input.length();
