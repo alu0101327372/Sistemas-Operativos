@@ -21,7 +21,7 @@ File::File(const char* pathname, int flags) {
 
 
 
-File::~File() {
+File::~File() noexcept(false) {
   int result = close(fd_);
   if (result < 0) {
     throw std::system_error(errno, std::system_category(), "No se pudo cerrar el archivo"); 

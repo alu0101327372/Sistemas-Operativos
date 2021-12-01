@@ -18,7 +18,7 @@
 class File {
   public:
   File(const char* pathname, int flags);
-  ~File(void);
+  ~File(void) noexcept(false);
 
   ssize_t read_from_file(void* buf, size_t count);
   ssize_t write_to_file(void* buf, size_t count);

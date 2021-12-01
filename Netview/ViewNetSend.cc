@@ -14,7 +14,7 @@
 
 int protected_main() {
   Socket socket_send("127.0.0.1", 3000);
-  char* filename = "prueba.txt";
+  char* filename = (char*)"prueba.txt";
   File file_send(filename, O_RDONLY);
 
   Message message;
