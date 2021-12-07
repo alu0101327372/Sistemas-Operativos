@@ -18,6 +18,7 @@ int protected_main() {
   sockaddr_in address{make_ip_address(3000, "127.0.0.1")};
   while (1 == 1) {
     socket_receive.receive_from(message, address);
+    std::cout << "El sistema " << " envió el mensaje '" << message.text.data() << "'\n";
   }
   return 0;
 }

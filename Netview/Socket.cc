@@ -70,8 +70,6 @@ void Socket::receive_from(Message& message, sockaddr_in& address) {
   // Recuperamos el puerto del remitente en el orden adecuado para nuestra CPU
   int remote_port = ntohs(address.sin_port);
   message.text[1023] = '\0';
-  // Imprimimos el mensaje y la dirección del remitente
-  std::cout << "El sistema " << remote_ip << ":" << remote_port << " envió el mensaje '" << message.text.data() << "'\n";
 }
 
 
