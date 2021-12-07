@@ -24,11 +24,9 @@ int protected_main() {
     message.text[1023] = '\0';
     socket_send.send_to(message,address);
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    std::cout << message.text.data() << std::endl;
   }
   message.text[1023] = '\0';
   file_send.read_from_file(&message.text, count);
-  std::cout << message.text.data() << std::endl;
   return 0;
 }
 
