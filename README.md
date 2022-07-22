@@ -1,2 +1,3 @@
-# Sistemas Operativos
-Prácticas de la asignatura de sistemas operativos
+# Operating Systems
+
+Development of the practices of the Operating Systems subject.
